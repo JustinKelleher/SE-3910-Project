@@ -3,8 +3,8 @@ package com.example.commerce.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "member")
-public class Member {
+@Table(name = "cube")
+public class Cube {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

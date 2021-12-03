@@ -17,8 +17,8 @@ public class TMemberRepository implements MemberRepository{
     }
 
     @Override
-    public Optional<Member> findById(Long id){
-        return Optional.of(store.get(id));
+    public Member findById(Long id){
+        return store.get(id);
     }
 
     @Override

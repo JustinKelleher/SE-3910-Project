@@ -1,0 +1,105 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+      <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+
+    <title>View Reservations Page</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sign-in/">
+<style>
+
+
+	div {text-align: center;}
+
+	h1 {text-align: center;}
+
+  .main {
+            padding: 5%;
+        }
+    </style>
+
+
+	 <!-- Custom styles for this template -->
+ </head>
+  <body class="text-center">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light" style="background-color: #ffffff;" >
+    <div class="container-xxl">
+        <a class="navbar-brand" href="#">
+            <img src="https://www.commercebank.com/-/media/cb/images/careers/home-page/about-commerce-large-circle.jpg?sc=1&revision=7cbcfc3e-6675-403e-a37f-4bdbfd3b6e1f&modified=20201116225822&hash=4CE712114A097AEC723A751BE719A9652FEE2788" alt="CommerceLogo" width="100" height="100">
+        </a>
+        <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/makeReservation_Registration">Make Reservations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/viewReservation">View Reservations</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a href="javascript: document.logoutForm.submit()" role="menuitem" class="nav-link">Logout</a>
+
+                    <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                        <input hidden type="submit" value="Sign Out"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+  <div class="main">
+  <h1>View Your Reservations</h1>
+  <table class="table table-striped" id="res">
+  <thead>
+    <tr>
+	  <!--<th scope="col"></th> -->
+      <th scope="col">Start Date</th>
+      <th scope="col">End Date</th>
+      <th scope="col">Location</th>
+	  <th scope="col">Remove</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr th:each="reservation : ${reservations}"
+          th:object="${reservation}"
+          th:if="${reservation.memberId} == '1'">
+          <td th:text="${reservation.startDate}"></td>
+          <td th:text="${reservation.endDate}"></td>
+          <td th:text="${reservation.cubeId}"></td>
+          <td>
+              <button type="button" class="btn-close" aria-label="Close"></button></td>
+          </td>
+      </tr>
+  </tbody>
+</table>
+</div>
+</body>
+
+<script>
+function myFunction(num)
+{
+    if (confirm("Are you sure you want to remove this reservation?")) {
+        document.getElementById("res").deleteRow(num);
+    }
+}
+</script>
+
+</html>

@@ -30,10 +30,10 @@
                       <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#">Make Reservations</a>
+                      <a class="nav-link" href="/makeReservation">Make Reservations</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#">View Reservations</a>
+                      <a class="nav-link" href="/viewReservation">View Reservations</a>
                     </li>
                     <li sec:authorize="!isAuthenticated()" class="nav-item">
                       <a class="nav-link" th:href="@{/login}">Login</a>

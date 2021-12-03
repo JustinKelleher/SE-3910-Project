@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
 <head>
     <title>Admin</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <style>
         .main {
             padding: 5%;
         }
     </style>
 </head>
-<body>
+<body onload="validDate()">
 
 <nav class="navbar navbar-expand-sm navbar-light bg-light" style="background-color: #ffffff;" >
     <div class="container-xxl">
@@ -22,13 +22,13 @@
         <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    <a class="nav-link" aria-current="page" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Make Reservations</a>
+                    <a class="nav-link" href="/makeReservation">Make Reservations</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">View Reservations</a>
+                    <a class="nav-link" href="/viewReservation">View Reservations</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item">
                     <a class="nav-link" th:href="@{/login}">Login</a>
@@ -50,32 +50,116 @@
         <div class="container-fluid py-5">
             <h1 th:inline="text" class="display-5 fw-bold">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
 
-            <p class="fs-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="fs-4">View all reservations, make changes to reservations, add new cubes  and remove cubes here.</p>
         </div>
     </div>
 
-    <form class="form-inline">
-        <input type="text" class="form-control mb-2 mr-sm-2" id="search" placeholder="Search for a cube or reservee">
+    <div class="upcomingReservations" style="padding:5%">
+        <h1>Upcoming Reservations</h1>
+        <form class="form-inline">
+            <input type="text" class="form-control mb-2 mr-sm-2" id="search" placeholder="Search for a cube or reservee">
 
-        <button type="submit" class="btn btn-primary mb-2">Submit</button>
-    </form>
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </form>
 
-    <table class="table table-striped">
-        <tr>
-            <th>Cube</th>
-            <th>Reservee</th>
-            <th>Start Day / Time</th>
-            <th>End Day / Time</th>
-            <th>Modify Reservation</th>
-        </tr>
-        <tr>
-            <td>100</td>
-            <td>Justin Kelleher</td>
-            <td>January 1, 2022 8:00 AM</td>
-            <td>January 1, 2022 5:00 PM</td>
-            <td><button type="button" class="btn-close" aria-label="Close"></button></td>
-        </tr>
-    </table>
+        <table class="table table-striped">
+            <tr>
+                <th>Cube</th>
+                <th>Reservee</th>
+                <th>Start Day / Time</th>
+                <th>End Day / Time</th>
+                <th>Modify Reservation</th>
+            </tr>
+            <tr th:each="reservation : ${reservations}">
+                <td
+                        th:each="cube : ${cubes}"
+                        th:object="${cube}"
+                        th:if="${cube.id} == ${reservation.cubeId}"
+                        th:text="${cube.name}">
+                </td>
+                <td
+                        th:each="member : ${members}"
+                        th:object="${member}"
+                        th:if="${member.id} == ${reservation.memberId}"
+                        th:text="${member.name}">
+                <.td>
+                <td th:text="${reservation.startDate}"></td>
+                <td th:text="${reservation.endDate}"></td>
+                <td>
+<!--                    <a th:href="@{/deleteReservation/{id}}" class="btn-close" aria-label="Close"></a>-->
+                    <a th:href="@{/deleteReservation/{id}(id=${reservation.id})}" class="btn-close" aria-label="Close"></a>
+
+                </td>
+            </tr>
+        </table>
+
+        <form class="form-inline" action="/reservations/new" method="post">
+            <h3>Add a Reservation</h3>
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input class="form-control mb-2 mr-sm-2" type="date" id="startDate" name="startDate">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input class="form-control mb-2 mr-sm-2" type="date" id="endDate" name="endDate">
+            </div>
+            <div class="form-group">
+                <label for="cubeId">Cube</label>
+                <label for="cubeId">Cube</label>
+                <div class="form-group blu-margin">
+                    <select class="form-control"  id="cubeId" name="cubeId">
+                        <option th:each="cube : ${cubes}" th:value="${cube.id}" th:text="${cube.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="memberId">Reservee</label>
+                <div class="form-group blu-margin">
+                    <select class="form-control"  id="memberId" name="memberId">
+                        <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <button type ="submit" class="btn btn-primary mb-2"> Add </button>
+        </form>
+    </div>
+
+    <div class="availableCubes" style="padding:5%">
+        <h1>Available Cubes</h1>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Cube</th>
+                <th>Delete</th>
+            </tr>
+            <tr th:each="cube : ${cubes}">
+                <td th:text="${cube.id}"></td>
+                <td th:text="${cube.name}"></td>
+                <td>
+                    <a th:href="@{/deleteCube/{id}(id=${cube.id})}" class="btn-close" aria-label="Close"></a>
+                </td>
+            </tr>
+        </table>
+        <form class="form-inline" action="/cubes/new" method="post">
+            <h3>Add a Cube</h3>
+            <div class="form-group">
+                <label for="name">Cube</label>
+                <input class="form-control mb-2 mr-sm-2" type="text" id="name" name="name" placeholder="Type a name">
+            </div>
+            <button type ="submit" class="btn btn-primary mb-2"> Add </button>
+        </form>
+    </div>
 </div>
+<script>
+    function validDate(){
+        var today = new Date().toISOString().split('T')[0];
+        var nextThreeMonthDate = new Date(new Date().getTime() + 89 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        var nextSixMonthDate = new Date(new Date().getTime() + 179 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        document.getElementsByName("startDate")[0].setAttribute('min', today);
+        document.getElementsByName("startDate")[0].setAttribute('max', nextThreeMonthDate);
+        document.getElementsByName("endDate")[0].setAttribute('min', today)
+        document.getElementsByName("endDate")[0].setAttribute('max', nextSixMonthDate)
+    }
+</script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.example.commerce.repository;
 
 import com.example.commerce.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -23,9 +24,9 @@ public class JpaMemberRepository implements MemberRepository {
 
 
     @Override
-    public Optional<Member> findById(Long id) {
+    public Member findById(Long id) {
         Member member = em.find(Member.class, id);
-        return Optional.ofNullable(member);
+        return member;
     }
 
     @Override
@@ -41,7 +42,10 @@ public class JpaMemberRepository implements MemberRepository {
     public List<Member> findAll() {
         return em.createQuery("select m from Member m" , Member.class)
                 .getResultList();
+    }
 
+    public interface MemberRepository<Member> extends JpaRepository<Member,String> {
+        List<NameOnly> findNamesByNameNotNull();
     }
 
     @Override
